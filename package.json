@@ -1,0 +1,13 @@
+{
+    "name": "test-bot",
+    "version": "1.0.0",
+    "description": "My First Discord Bot",
+    "main": "bot.js",
+    "author": "Ryan Smith",
+    "dependencies": {
+        "discord.js": "^12.4.0",
+        "dotenv-flow": "^3.2.0",
+        "fs": "0.0.1-security",
+        "node-fetch": "^2.6.1"
+    }
+}
