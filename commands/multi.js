@@ -4,7 +4,7 @@ module.exports = {
   execute( message, args){
   const multiContent = message.content.split(" ")
           multiContent.shift()
-          const options = multiContent[0].split("/")
+          const options = multiContent[0].split(",")
           const finalText = []
           var count = 1
           options.forEach(option => {
