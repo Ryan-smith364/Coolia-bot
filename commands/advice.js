@@ -2,7 +2,7 @@ const fetch = require("node-fetch");
 
 module.exports = {
   name:'advice',
-  description: 'advice command',
+  description: 'bad advice command',
   execute( message, args){
 
 

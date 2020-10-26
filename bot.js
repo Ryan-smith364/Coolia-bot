@@ -36,11 +36,6 @@ client.on("message", (message) => {
         console.error(error)
         message.reply("there was an issue finding your command")
     }
-
-    // }else if (command === 'addMovie'){
-
-    // }
-
 })
 
 client.login(config.token)
