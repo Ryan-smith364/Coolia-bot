@@ -7,7 +7,7 @@ module.exports = {
     function timeDifference() {
       var today = new Date()
       const difference = findNextFriday() - today
-      var remaining = "Time's up!"
+      var remaining = "The Time Is Now!!!"
 
       if (difference > 0) {
         const parts = {
