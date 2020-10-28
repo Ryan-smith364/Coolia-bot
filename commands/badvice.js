@@ -1,8 +1,7 @@
 const fetch = require("node-fetch");
-const advice = require("./advice");
 
 module.exports = {
-  name:'badadvice',
+  name:'badvice',
   description: 'gives good advice',
   execute( message, args){
     fetch('https://api.adviceslip.com/advice')
