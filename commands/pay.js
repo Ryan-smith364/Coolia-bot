@@ -1,7 +1,7 @@
 const fetch = require("node-fetch");
 module.exports = {
   name:'pay',
-  description: 'A kind Goodmorning',
+  description: 'gives money to mentioned user',
   execute( message, args){
     if(message.author.id === '432172127123144705'){
       var userBank = []

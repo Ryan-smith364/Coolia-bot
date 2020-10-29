@@ -2,7 +2,7 @@ const fetch = require("node-fetch");
 
 module.exports = {
   name:'compliment',
-  description: 'compliment command',
+  description: 'sends a random compliment to either a user or the sender',
   execute( message, args){
 
 

@@ -1,7 +1,7 @@
 
 module.exports = {
   name:'friday',
-  description: 'A kind Goodmorning',
+  description: 'gives an count down to movie night',
   execute( message, args){
     
     function timeDifference() {

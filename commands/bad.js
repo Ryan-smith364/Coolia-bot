@@ -2,7 +2,7 @@ const fetch = require("node-fetch");
 
 module.exports = {
   name:'bad',
-  description: 'joke command',
+  description: 'joke command but has a chance to be bad',
   execute( message, args){
 
 

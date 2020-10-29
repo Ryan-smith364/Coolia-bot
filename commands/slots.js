@@ -1,6 +1,6 @@
 module.exports = {
   name:'slots',
-  description: 'A kind Goodmorning',
+  description: 'A game of chance in order to win the community jackpot, everything lost from the other games',
   execute( message, args){
     var fruit = ['🍇', '🍋', '🍓', '🍒', '🍊', '🍉', '🍐', '⑦']
     var result = []

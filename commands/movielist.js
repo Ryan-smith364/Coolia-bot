@@ -2,7 +2,7 @@ const fetch = require("node-fetch");
 
 module.exports = {
   name:'movielist',
-  description: 'A tender goodnight',
+  description: 'Gives the list to all the friday night movies we need to see or have watched',
   execute( message, args){
     fetch('http://localhost:3000/movies')
         .then(resp => resp.json())

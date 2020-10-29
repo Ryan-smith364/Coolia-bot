@@ -2,7 +2,7 @@ const talkedRecently = new Set();
 const fetch = require("node-fetch");
 module.exports = {
   name:'hourly',
-  description: 'A kind Goodmorning',
+  description: 'is the basic way to get money for gammbling',
   execute( message, args){
 
 

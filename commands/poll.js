@@ -1,6 +1,6 @@
 module.exports = {
   name:'poll',
-  description: 'poll command',
+  description: 'creates a message √ / x reactions',
   execute( message, args){
     const pollContent = message.content.split(" ")
         pollContent.shift()

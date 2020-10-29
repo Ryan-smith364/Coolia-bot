@@ -3,7 +3,7 @@ const fetch = require("node-fetch");
 
 module.exports = {
   name:'bj',
-  description: 'gamble because why npot',
+  description: 'commands, with blackjack and hookers',
   execute( message, args){
     console.log(args)
     var bet = parseInt(args[0])

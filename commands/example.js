@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 module.exports = {
   name:'example',
-  description: 'A kind Goodmorning',
+  description: 'p.o.c',
   execute( message, args){
 
     const exampleEmbed = new Discord.MessageEmbed()

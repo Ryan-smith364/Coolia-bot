@@ -2,7 +2,7 @@ const fetch = require("node-fetch");
 
 module.exports = {
   name:'bal',
-  description: 'gambling fund command',
+  description: 'gives the user their current balance',
   execute( message, args){
     var searchUser = message.author.id
     const obj = {
