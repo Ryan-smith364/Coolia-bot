@@ -55,7 +55,7 @@ module.exports = {
             if (values[i] == "J" || values[i] == "Q" ||       values[i] == "K")
               weight = 10
             if (values[i] == "A")
-              weight = 11
+              weight = 1
               var card = { value: values[i], suit: suits[x],weight: weight }
               deck.push(card)
           }
@@ -74,6 +74,17 @@ module.exports = {
       players[player].hand.forEach(card => {
         handTotal = handTotal + card.weight
       })
+      
+      var aces = players[player].hand.filter(card => card.value === 'A').length
+      console.log("Busted", aces)
+      if (aces > 0) {
+        for(var x = 0; x < aces; x++){
+         if(handTotal + 10 < 21){
+            handTotal = handTotal + 10
+         }
+        }
+      }
+      
       players[player].total = handTotal
     }
 
@@ -132,14 +143,19 @@ module.exports = {
   if(balance <= bet){
     
     createDeck()
-      startRound()
+    startRound()
 
       message.channel.send("BlackJack\nHand:" + displayHand(0) + "\nTotal: " + players[0].total + '\n\nDealer: ' + players[1].hand[0].value + players[1].hand[0].suit + ' ??' + '\nDealer Total: ' + players[1].hand[0].weight)
         .then((msg)=> {
         
           const collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, { time: 50000 });
             collector.on('collect', message => {
-                if (message.content === "hit") {
+                if(total(currentPlayer) === 21){
+                  collector.stop()
+                  currentPlayer++
+                  botLogic()
+                }
+                else if (message.content.toLowerCase() === "hit") {
                   if(players[currentPlayer].total < 21){
                     hit()
                     msg.edit("BlackJack\nHand:" + displayHand(0) + "\nTotal: " + players[0].total + '\n\nDealer: ' + players[1].hand[0].value + players[1].hand[0].suit + ' ??' + '\nDealer Total: ' + players[1].hand[0].weight)
@@ -163,7 +179,7 @@ module.exports = {
                   }
                   }
                 
-                } else if (message.content === "stand") {
+                } else if (message.content.toLowerCase() === "stand") {
                   collector.stop()
                   currentPlayer++
                   botLogic()

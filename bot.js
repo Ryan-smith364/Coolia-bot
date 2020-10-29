@@ -23,6 +23,9 @@ for(const file of commandFiles){
 }
 
 client.on("message", (message) => {
+    if(message.content.toLowerCase() === "dink"){
+        message.channel.send("Donk")
+    }
 
     if (!message.content.startsWith(config.prefix) || message.author.bot) return;
 

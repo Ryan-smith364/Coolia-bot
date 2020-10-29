@@ -1,7 +1,7 @@
 const talkedRecently = new Set();
 const fetch = require("node-fetch");
 module.exports = {
-  name:'daily',
+  name:'hourly',
   description: 'A kind Goodmorning',
   execute( message, args){
 
@@ -36,7 +36,7 @@ module.exports = {
       .catch(err => console.warn(err))
 
     function findAmount(){
-      var cash = Math.floor(Math.random() * 600)
+      var cash = Math.floor(Math.random() * 600) + 100
       message.channel.send("You Found $" + cash + " on the ground!!")
       return cash
     }
