@@ -1,9 +1,12 @@
 const Discord = require("discord.js")
 
+
 module.exports = {
   name:'test',
   description: 'A Test',
+  cooldown: 5,
   execute( message, args){
-    console.log("Test")
+    message.channel.send("rfmboidsfmnbsdfiomnbv")
+        
   }
 }

@@ -4,25 +4,28 @@ module.exports = {
   description: 'p.o.c',
   execute( message, args){
 
+    console.log(message)
+
     const exampleEmbed = new Discord.MessageEmbed()
       .setColor('#0099ff')
-      .setTitle('Some title')
-      .setURL('https://discord.js.org/')
-      .setAuthor('Some name', 'https://i.imgur.com/wSTFkRM.png', 'https://discord.js.org')
-      .setDescription('Some description here')
-      .setThumbnail('https://i.imgur.com/wSTFkRM.png')
+      .setTitle('Blackjack')
+      .setURL('https://www.youtube.com/watch?v=dfwILKsb7J4')
+      .setThumbnail()
       .addFields(
-        { name: 'Regular field title', value: 'Some value here' },
+        { name: 'Hand:', value: displayHand(0) },
+        { name: 'Total:', value: total(0) },
         { name: '\u200B', value: '\u200B' },
-        { name: 'Inline field title', value: 'Some value here', inline: true },
-        { name: 'Inline field title', value: 'Some value here', inline: true },
+        { name: 'Dealer:', value: displayHand(1) },
+        { name: 'DTotal:', value: total(1) },
       )
-      .addField('Inline field title', 'Some value here', true)
-      .setImage('https://i.imgur.com/wSTFkRM.png')
       .setTimestamp()
-      .setFooter('Some footer text here', 'https://i.imgur.com/wSTFkRM.png');
 
-    message.channel.send(exampleEmbed);
+    message.channel.send(exampleEmbed).then((msg)=> {
+      setTimeout(function(){
+        exampleEmbed.setTitle('with hookers')
+        msg.edit(exampleEmbed)
+      }, 2000)
+    })
 
   }
 }

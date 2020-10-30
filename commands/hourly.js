@@ -30,7 +30,8 @@ module.exports = {
       .then(resp => resp.json())
       .then(bank => {
         userBank = bank[0]
-        userBank.amount = userBank.amount + findAmount()
+        var newval = parseInt(userBank.amount) + findAmount()
+        userBank.amount = newval.toString()
         updateUserBal()
       })
       .catch(err => console.warn(err))

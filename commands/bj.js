@@ -8,7 +8,6 @@ module.exports = {
     console.log(args)
     var bet = parseInt(args[0])
     var userBank = {}
-    var balance = 0
 
     var searchUser = message.author.id
     const obj = {
@@ -25,6 +24,7 @@ module.exports = {
       .then(bank => {
         userBank = bank[0]
         bal = bank[0].amount
+        round()
       })
       .catch(err => console.warn(err))
 
@@ -79,7 +79,7 @@ module.exports = {
       console.log("Busted", aces)
       if (aces > 0) {
         for(var x = 0; x < aces; x++){
-         if(handTotal + 10 < 21){
+         if(handTotal + 10 <= 21){
             handTotal = handTotal + 10
          }
         }
@@ -110,20 +110,13 @@ module.exports = {
       console.log(players)
     }
 
-    
-    function botLogic(){
-      while(players[1].total < players[0].total){
-        hit(1)
-      }
-    }
-
     function updateUserBal(won){
       if(won){
-        userBank.amount = userBank.amount + bet
+        userBank.amount = parseInt(userBank.amount) + bet
       } else{
-        userBank.amount = userBank.amount - bet
+        userBank.amount = parseInt(userBank.amount) - bet
       }
-  
+      userBank.amount = userBank.amount.toString()
       var searchUser = message.author.id
       const obj = {
         method: 'PATCH',
@@ -139,70 +132,103 @@ module.exports = {
     .then(bank => console.log(bank))
     .catch(err => console.warn(err))
   }
-  
-  if(balance <= bet){
-    
-    createDeck()
-    startRound()
 
-      message.channel.send("BlackJack\nHand:" + displayHand(0) + "\nTotal: " + players[0].total + '\n\nDealer: ' + players[1].hand[0].value + players[1].hand[0].suit + ' ??' + '\nDealer Total: ' + players[1].hand[0].weight)
-        .then((msg)=> {
-        
-          const collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, { time: 50000 });
-            collector.on('collect', message => {
-                if(total(currentPlayer) === 21){
+   function round(){
+     if(parseInt(userBank.amount) >= bet){
+       
+       createDeck()
+       startRound()
+       
+       const bjDisplay = new Discord.MessageEmbed()
+       .setColor('#0099ff')
+       .setTitle('Blackjack')
+       .setURL('https://www.youtube.com/watch?v=dfwILKsb7J4')
+       .addFields(
+         { name: 'Hand:  ' + displayHand(0) ,value: 'Total: ' + players[0].total},
+         { name: '\u200B', value: '\u200B' },
+         { name: 'Dealer:  ' + players[1].hand[0].value + players[1].hand[0].suit + ' ???' ,value: 'Total: ' + players[1].hand[0].weight},
+       )
+       .setTimestamp()
+       bjDisplay.color = 0x7289da;
+   
+         function editDisplay() {
+           bjDisplay.fields = []
+           bjDisplay.addFields(
+             { name: 'Hand:  ' + displayHand(0) ,value: 'Total: ' + players[0].total},
+             { name: '\u200B', value: '\u200B' },
+             { name: 'Dealer:  ' + players[1].hand[0].value + players[1].hand[0].suit + ' ???' ,value: 'Total: ' + players[1].hand[0].weight},
+           )
+         }
+   
+         function botLogic(){
+           while(players[1].total < players[0].total){
+             hit(1)
+           }
+           bjDisplay.fields = []
+           bjDisplay.addFields(
+             { name: 'Hand:  ' + displayHand(0) ,value: 'Total: ' + players[0].total},
+             { name: '\u200B', value: '\u200B' },
+             { name: 'Dealer:  ' + displayHand(1) ,value: 'Total: ' + players[1].total},
+           )
+         }
+         
+         message.channel.send(bjDisplay)
+         .then((msg)=> {
+           
+           const collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, { time: 50000 });
+           collector.on('collect', message => {
+              if (message.content.toLowerCase() === "hit") {
+                if(players[currentPlayer].total < 21){
+                  hit()
+                  editDisplay()
+                  msg.edit(bjDisplay)
+                }
+                if(players[currentPlayer].total > 21){
+                  bjDisplay.setDescription('You lose!')
+                  editDisplay()
+                  msg.edit(bjDisplay)
+                  updateUserBal(false)
+                }else if(players[currentPlayer].total === 21){
                   collector.stop()
                   currentPlayer++
                   botLogic()
-                }
-                else if (message.content.toLowerCase() === "hit") {
-                  if(players[currentPlayer].total < 21){
-                    hit()
-                    msg.edit("BlackJack\nHand:" + displayHand(0) + "\nTotal: " + players[0].total + '\n\nDealer: ' + players[1].hand[0].value + players[1].hand[0].suit + ' ??' + '\nDealer Total: ' + players[1].hand[0].weight)
-                  }
-                  if(players[currentPlayer].total > 21){
-                    msg.edit("BlackJack YOU LOSE\nHand:" + displayHand(0) + "\nTotal: Busted" + '\n\nDealer: ' + players[1].hand[0].value + players[1].hand[0].suit + ' ??' + '\nDealer Total: ' + players[1].hand[0].weight)
-                    updateUserBal(false)
-                  }else if(players[currentPlayer].total === 21){
-                    collector.stop()
-                    currentPlayer++
-                    botLogic()
-                    msg.edit("BlackJack\nHand:" + displayHand(0) + "\nTotal: " + players[0].total + '\n\nDealer: ' + displayHand(1) + '\nDealer Total: ' + players[1].total)
                   if(players[1].total > 21){
-                    msg.edit("BlackJack YOU WIN\nHand:" + displayHand(0) + "\nTotal: " + players[0].total + '\n\nDealer: ' + displayHand(1) + '\nDealer Total: ' + players[1].total)
+                    bjDisplay.setDescription('You Win!')
+                    editDisplay()
+                    msg.edit(bjDisplay)
                     updateUserBal(true)
                   }else if(players[0].total === players[1].total){
-                    msg.edit("BlackJack TIE\nHand:" + displayHand(0) + "\nTotal: " + players[0].total + '\n\nDealer: ' + displayHand(1) + '\nDealer Total: ' + players[1].total)
+                    bjDisplay.setDescription('Tie')
+                    editDisplay()
+                    msg.edit(bjDisplay)
                   }else{
-                    msg.edit("BlackJack YOU LOSE\nHand:" + displayHand(0) + "\nTotal: " + players[0].total + '\n\nDealer: ' + displayHand(1) + '\nDealer Total: ' + players[1].total)
+                    bjDisplay.setDescription('You Lose')
+                    editDisplay()
+                    msg.edit(bjDisplay)
                     updateUserBal(false)
                   }
-                  }
-                
+                }
                 } else if (message.content.toLowerCase() === "stand") {
                   collector.stop()
                   currentPlayer++
                   botLogic()
-                  msg.edit("BlackJack\nHand:" + displayHand(0) + "\nTotal: " + players[0].total + '\n\nDealer: ' + displayHand(1) + '\nDealer Total: ' + players[1].total)
-                  if(players[1].total > 21){
-                    msg.edit("BlackJack YOU WIN\nHand:" + displayHand(0) + "\nTotal: " + players[0].total + '\n\nDealer: ' + displayHand(1) + '\nDealer Total: ' + players[1].total)
-                    updateUserBal(true)
-                  }else if(players[0].total === players[1].total){
-                    msg.edit("BlackJack TIE\nHand:" + displayHand(0) + "\nTotal: " + players[0].total + '\n\nDealer: ' + displayHand(1) + '\nDealer Total: ' + players[1].total)
-                  }else{
-                    msg.edit("BlackJack YOU LOSE\nHand:" + displayHand(0) + "\nTotal: " + players[0].total + '\n\nDealer: ' + displayHand(1) + '\nDealer Total: ' + players[1].total)
-                    updateUserBal(false)
-
-                  }
-
+                if(players[1].total > 21){
+                  bjDisplay.setDescription('You Win!')
+                  msg.edit(bjDisplay)
+                  updateUserBal(true)
+                }else if(players[0].total === players[1].total){
+                  bjDisplay.setDescription('Tie')
+                  msg.edit(bjDisplay)
+                }else{
+                  bjDisplay.setDescription('You Lose')
+                  msg.edit(bjDisplay)
+                  updateUserBal(false)
                 }
-    
               }
-          )
-          
-        })
-    }else{
-      message.channel.send("You Dont Have Enough To Bet That or you must place  Bet value")
+            }
+        )})}else{
+          message.channel.send("You Dont Have Enough To Bet That or you must place  Bet value")
+      }
     }
-  }
+   }
 }
