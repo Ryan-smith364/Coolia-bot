@@ -37,7 +37,7 @@ module.exports = {
       .catch(err => console.warn(err))
 
     function findAmount(){
-      var cash = Math.floor(Math.random() * 600) + 100
+      var cash = Math.floor(Math.random() * 500) + 100
       message.channel.send("You Found $" + cash + " on the ground!!")
       return cash
     }

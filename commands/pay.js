@@ -21,7 +21,7 @@ module.exports = {
         .then(resp => resp.json())
         .then(bank => {
           userBank = bank[0]
-          userBank.amount = pareInt(userBank.amount) + parseInt(args[1])
+          userBank.amount = parseInt(userBank.amount) + parseInt(args[1])
           updateUserBal()
         })
         .catch(err => console.warn(err))

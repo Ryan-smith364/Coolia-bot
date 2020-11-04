@@ -1,13 +1,14 @@
-const Discord = require("discord.js")
+const Discord = require("discord.js");
+const { constants } = require("fs");
 const fetch = require("node-fetch");
 
 module.exports = {
   name:'bj',
   description: 'commands, with blackjack and hookers',
   execute( message, args){
-    console.log(args)
     var bet = parseInt(args[0])
     var userBank = {}
+    var jackpot = {}
 
     var searchUser = message.author.id
     const obj = {
@@ -24,6 +25,7 @@ module.exports = {
       .then(bank => {
         userBank = bank[0]
         bal = bank[0].amount
+        findJackpot()
         round()
       })
       .catch(err => console.warn(err))
@@ -76,7 +78,7 @@ module.exports = {
       })
       
       var aces = players[player].hand.filter(card => card.value === 'A').length
-      console.log("Busted", aces)
+      
       if (aces > 0) {
         for(var x = 0; x < aces; x++){
          if(handTotal + 10 <= 21){
@@ -117,7 +119,6 @@ module.exports = {
         userBank.amount = parseInt(userBank.amount) - bet
       }
       userBank.amount = userBank.amount.toString()
-      var searchUser = message.author.id
       const obj = {
         method: 'PATCH',
           headers:{ 
@@ -133,8 +134,28 @@ module.exports = {
     .catch(err => console.warn(err))
   }
 
+  function findJackpot(){
+     var searchUser = "123456781234567543"
+     const obj = {
+       method: 'POST',
+         headers:{ 
+           'content-type': 'application/json',
+           Accept: 'application/json'
+         },
+         body: JSON.stringify({searchUser})
+       }
+           
+     fetch('http://localhost:3000/banks/search', obj)
+       .then(resp => resp.json())
+       .then(bank => {
+         jackpot = bank[0]
+         console.log(jackpot)
+       })
+       .catch(err => console.warn(err))
+  }
+
    function round(){
-     if(parseInt(userBank.amount) >= bet){
+     if(parseInt(userBank.amount) >= bet && bet > 0){
        
        createDeck()
        startRound()
@@ -163,7 +184,7 @@ module.exports = {
          function botLogic(){
            while(players[1].total < players[0].total){
              hit(1)
-           }
+           }           
            bjDisplay.fields = []
            bjDisplay.addFields(
              { name: 'Hand:  ' + displayHand(0) ,value: 'Total: ' + players[0].total},
@@ -171,11 +192,29 @@ module.exports = {
              { name: 'Dealer:  ' + displayHand(1) ,value: 'Total: ' + players[1].total},
            )
          }
-         
+
+        function updateJackpot(){
+          userBank = jackpot
+          const obj = {
+            method: 'PATCH',
+              headers:{ 
+                'content-type': 'application/json',
+                Accept: 'application/json'
+              },
+              body: JSON.stringify({userBank})
+            }
+                
+          fetch(`http://localhost:3000/banks/${userBank.id}`, obj)
+            .then(resp => resp.json())
+            .then(bank => console.log(bank))
+            .catch(err => console.warn(err))
+         }
+
+
          message.channel.send(bjDisplay)
          .then((msg)=> {
            
-           const collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, { time: 50000 });
+           const collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, { time: 120000 });
            collector.on('collect', message => {
               if (message.content.toLowerCase() === "hit") {
                 if(players[currentPlayer].total < 21){
@@ -184,28 +223,38 @@ module.exports = {
                   msg.edit(bjDisplay)
                 }
                 if(players[currentPlayer].total > 21){
+                  collector.stop()
                   bjDisplay.setDescription('You lose!')
+                  updateUserBal(false)
+                  jackpot.amount = parseInt(jackpot.amount) + bet
+                  jackpot.amount = jackpot.amount.toString()
                   editDisplay()
                   msg.edit(bjDisplay)
-                  updateUserBal(false)
+                  updateJackpot()
                 }else if(players[currentPlayer].total === 21){
                   collector.stop()
                   currentPlayer++
                   botLogic()
                   if(players[1].total > 21){
+                    collector.stop()
                     bjDisplay.setDescription('You Win!')
-                    editDisplay()
                     msg.edit(bjDisplay)
+                    editDisplay()
                     updateUserBal(true)
                   }else if(players[0].total === players[1].total){
                     bjDisplay.setDescription('Tie')
+                    collector.stop()
                     editDisplay()
                     msg.edit(bjDisplay)
                   }else{
                     bjDisplay.setDescription('You Lose')
+                    collector.stop()
                     editDisplay()
                     msg.edit(bjDisplay)
                     updateUserBal(false)
+                    jackpot.amount = parseInt(jackpot.amount) + bet
+                    jackpot.amount = jackpot.amount.toString()
+                    updateJackpot()
                   }
                 }
                 } else if (message.content.toLowerCase() === "stand") {
@@ -215,16 +264,22 @@ module.exports = {
                 if(players[1].total > 21){
                   bjDisplay.setDescription('You Win!')
                   msg.edit(bjDisplay)
+                  collector.stop()
                   updateUserBal(true)
                 }else if(players[0].total === players[1].total){
                   bjDisplay.setDescription('Tie')
+                  collector.stop()
                   msg.edit(bjDisplay)
                 }else{
                   bjDisplay.setDescription('You Lose')
                   msg.edit(bjDisplay)
+                  collector.stop()
                   updateUserBal(false)
-                }
-              }
+                  jackpot.amount = parseInt(jackpot.amount) + bet
+                  jackpot.amount = jackpot.amount.toString()
+                  updateJackpot()
+          }
+        }
             }
         )})}else{
           message.channel.send("You Dont Have Enough To Bet That or you must place  Bet value")
