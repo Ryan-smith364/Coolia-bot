@@ -164,6 +164,7 @@ module.exports = {
        .setColor('#0099ff')
        .setTitle('Blackjack')
        .setURL('https://www.youtube.com/watch?v=dfwILKsb7J4')
+       .setImage('https://crescent.edu/uploads/editor/images/Blackjack.png')
        .addFields(
          { name: 'Hand:  ' + displayHand(0) ,value: 'Total: ' + players[0].total},
          { name: '\u200B', value: '\u200B' },
@@ -214,9 +215,10 @@ module.exports = {
          message.channel.send(bjDisplay)
          .then((msg)=> {
            
-           const collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, { time: 120000 });
+           const collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, { time: 300000, });
            collector.on('collect', message => {
               if (message.content.toLowerCase() === "hit") {
+                message.delete()
                 if(players[currentPlayer].total < 21){
                   hit()
                   editDisplay()
@@ -258,6 +260,7 @@ module.exports = {
                   }
                 }
                 } else if (message.content.toLowerCase() === "stand") {
+                  message.delete()
                   collector.stop()
                   currentPlayer++
                   botLogic()
