@@ -5,7 +5,6 @@ module.exports = {
   description: 'joke command but has a chance to be bad',
   execute( message, args){
 
-
     fetch('https://sv443.net/jokeapi/v2/joke/Any')
     .then(resp => resp.json())
     .then(joke => { 

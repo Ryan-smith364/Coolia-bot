@@ -1,5 +1,7 @@
 const talkedRecently = new Set();
 const fetch = require("node-fetch");
+const Discord = require("discord.js");
+
 module.exports = {
   name:'hourly',
   description: 'is the basic way to get money for gammbling',
@@ -36,10 +38,16 @@ module.exports = {
       })
       .catch(err => console.warn(err))
 
+    const Display = new Discord.MessageEmbed()
+    .setColor('#0099ff')
+    .setDescription("Get some rest champ you've earned it")
+
     function findAmount(){
-      var cash = Math.floor(Math.random() * 500) + 100
-      message.channel.send("You Found $" + cash + " on the ground!!")
-      return cash
+      var tokens = Math.floor(Math.random() * 48) + 2
+      outcomes = [`you robbed ${tokens} from some random kid`, `You Found ${tokens} tokens on the ground. Score!`, `You see ${tokens} tokens on the ground. Might as well...`, `nothing says well earned tokens like theft. \n +${tokens} tokens`,]
+      Display.setDescription(outcomes[Math.floor(Math.random() * outcomes.length)])
+      message.channel.send(Display)
+      return tokens
     }
 
     

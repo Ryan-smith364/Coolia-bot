@@ -26,7 +26,7 @@ module.exports = {
                                       }
                                   })
           }else{
-                    message.channel.send("Wrong Structure #####")
+                    message.channel.send("Too many arguments, please give 10 or less options")
                     .then(msg => {
                       msg.delete(1000)
                     })

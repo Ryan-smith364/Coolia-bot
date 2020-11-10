@@ -135,7 +135,7 @@ module.exports = {
   }
 
   function findJackpot(){
-     var searchUser = "123456781234567543"
+     var searchUser = "c"
      const obj = {
        method: 'POST',
          headers:{ 

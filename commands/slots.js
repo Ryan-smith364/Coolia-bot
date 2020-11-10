@@ -1,4 +1,5 @@
 const fetch = require("node-fetch");
+const Discord = require("discord.js")
 
 module.exports = {
   name:'slots',
@@ -9,6 +10,10 @@ module.exports = {
     var jackpot = ['⑦','⑦','⑦']
     var searchUser = message.author.id
     userBank = {}
+
+    const Display = new Discord.MessageEmbed()
+    .setColor('#0099ff')
+    .setDescription("Question:" + " " + join)
 
     function roll() {
       for(var x = 0; x < 3; x++){
@@ -52,9 +57,11 @@ module.exports = {
     if(result === jackpot){
       userBank.amount = userBank.amount + 9999
       winJackpot()
-      message.channel.send("Slots\n" + result.join("  ") + "\nYou Win The Jackpot!!!")
+      .setDescription("Slots\n" + result.join("  ") + "\nYou Win The Jackpot!!!")
+      message.channel.send(Display)
     } else{
-      message.channel.send("Slots\n" + result.join("  ") )
+      Display.setDescription("Slots\n" + result.join("  ") )
+      message.channel.send(Display)
     }
   }
 }

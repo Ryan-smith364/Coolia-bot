@@ -1,3 +1,4 @@
+const Discord = require("discord.js");
 
 module.exports = {
   name:'friday',
@@ -32,7 +33,12 @@ module.exports = {
       return d;
     } 
 
-    message.channel.send(timeDifference())
+    const Display = new Discord.MessageEmbed()
+    .setColor('#0099ff')
+    .setDescription(timeDifference())
+
+
+    message.channel.send(Display)
 
   }
 }
